@@ -42,3 +42,7 @@ next-env.d.ts
 
 # firebase
 firebase-debug.log
+
+# agent instructions (local-only, not part of the public submission)
+CLAUDE.md
+AGENTS.md
