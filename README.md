@@ -2,6 +2,8 @@
 
 Everyone's AI agent adds their own items and allergies to one shared group order — Kitty tracks it live and splits the bill automatically, no manual collecting or spreadsheet math needed.
 
+**Live:** https://kitty-1003427733440.asia-south1.run.app
+
 Built for the [WebMCP Challenge](https://webmcp.devpost.com/). See [`PROJECT.md`](./PROJECT.md) for the full submission write-up and [`PLAN.md`](./PLAN.md) for the build plan.
 
 ## How it works
@@ -44,11 +46,22 @@ Open the order page, join with a name, then ask your agent to browse the menu, a
 
 ## Architecture notes
 
-- Next.js (App Router, TypeScript), deployed on **Firebase App Hosting** (GCP), which runs on Cloud Run.
-- Session state is an **in-memory store** (`src/lib/kitty/store.ts`) — no database. This means the backend must run as a **single instance**; see `apphosting.yaml`.
+- Next.js (App Router, TypeScript), deployed directly to **Cloud Run** (GCP) via `gcloud run deploy --source .` (source-based Buildpacks build, no Dockerfile).
+- Session state is an **in-memory store** (`src/lib/kitty/store.ts`) — no database. This means the backend must run as a **single instance**, so it's deployed with `--min-instances=1 --max-instances=1`.
 - Clients sync via polling (`GET /api/session/:id` every ~2s) rather than websockets, to keep the implementation small.
 - Every mutating tool call is scoped server-side to the calling participant's identity (name + a per-participant token generated client-side on join), so one agent can never edit another participant's order. `finalize_order` requires a separate host token.
 - The menu is a fixed allow-list (`src/lib/kitty/menu.ts`) — an agent can never invent an arbitrary priced item.
+
+## Deploying
+
+```bash
+gcloud run deploy kitty \
+  --source . \
+  --region asia-south1 \
+  --allow-unauthenticated \
+  --min-instances=1 \
+  --max-instances=1
+```
 
 ## License
 

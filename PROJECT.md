@@ -2,6 +2,8 @@
 
 Everyone's AI agent adds their own items and allergies to one shared group order — Kitty tracks it live and splits the bill automatically, no manual collecting or spreadsheet math needed.
 
+**Live:** https://kitty-1003427733440.asia-south1.run.app
+
 ## Inspiration
 
 Group orders always end the same way: one person becomes the unpaid dispatcher, allergies get missed, and the bill math takes longer than the meal did. We wanted agents to take over the boring parts — without losing what makes ordering together social.
@@ -12,7 +14,7 @@ Kitty is a shared order page where everyone's own AI agent adds their items and 
 
 ## How we built it
 
-Seven `document.modelContext.registerTool()` calls — `browse_menu`, `add_item`, `remove_item`, `set_dietary_restriction`, `get_order_summary`, `split_bill`, `finalize_order` — on a Next.js app deployed to Firebase App Hosting (GCP). Every mutating call is scoped server-side to the calling participant's identity, so an agent can only ever touch its own order. State lives in a lightweight in-memory session store, synced to every viewer with plain polling — no infrastructure we didn't need.
+Seven `document.modelContext.registerTool()` calls — `browse_menu`, `add_item`, `remove_item`, `set_dietary_restriction`, `get_order_summary`, `split_bill`, `finalize_order` — on a Next.js app deployed straight to Cloud Run (GCP) via `gcloud run deploy --source .`, pinned to a single instance. Every mutating call is scoped server-side to the calling participant's identity, so an agent can only ever touch its own order. State lives in a lightweight in-memory session store, synced to every viewer with plain polling — no infrastructure we didn't need.
 
 ## Challenges we ran into
 
@@ -36,10 +38,10 @@ Itemized (not just equal) bill splitting, real restaurant menu imports, and lett
 
 **Framework:** Next.js, React
 
-**Platforms:** Web — deployed via Firebase App Hosting, tested via ChatGPT's in-app browser and Google Chrome 149+ (`chrome://flags/#enable-webmcp-testing`)
+**Platforms:** Web — deployed via `gcloud run deploy` (Cloud Run, source-based Buildpacks build), tested via ChatGPT's in-app browser and Google Chrome 149+ (`chrome://flags/#enable-webmcp-testing`)
 
-**Cloud services:** Google Cloud Platform — Firebase App Hosting, Cloud Run (hosting runtime), Firestore (fallback session store)
+**Cloud services:** Google Cloud Platform — Cloud Run (single dedicated service, isolated from other services in the same project), Cloud Build (source deploy)
 
-**Database:** In-memory session store, pinned to a single Cloud Run instance (no persistent DB by default — deliberately out of scope per the build plan; Firestore is the fallback if session persistence becomes necessary)
+**Database:** In-memory session store, pinned to a single Cloud Run instance (`min-instances=1`, `max-instances=1`) — no persistent DB by default; a separately-named Firestore database is the fallback if session persistence becomes necessary, kept fully isolated from any other data in the project
 
 **API:** WebMCP (`document.modelContext.registerTool`), Next.js API routes (REST)
