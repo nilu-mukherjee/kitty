@@ -78,11 +78,12 @@ Total: ~9.5h — leaves slack against a full working day.
 ## 8. Submission checklist
 
 - [x] Live URL works in ChatGPT's in-app browser or Chrome 149+ with `chrome://flags/#enable-webmcp-testing` — https://kitty-1003427733440.asia-south1.run.app deployed and smoke-tested (create/get/split/finalize all verified via curl in prod); **still needs a manual pass in an actual WebMCP-capable browser to confirm tool registration works live**
-- [ ] Public repo (GitHub/GitLab/Bitbucket) with all source + setup instructions
-- [ ] Open-source license file (MIT recommended), visible in the repo's "About" section
-- [ ] Repo demonstrates real `document.modelContext.registerTool(...)` usage (per required snippet)
-- [ ] Text description covers: WebMCP fit, UX improvement, what's newly possible, implementation summary
+- [x] Public repo (GitHub/GitLab/Bitbucket) with all source + setup instructions — https://github.com/nilu-mukherjee/kitty
+- [x] Open-source license file (MIT recommended), visible in the repo's "About" section — `LICENSE` committed; **confirm it shows in GitHub's About panel once the repo's visibility/settings are checked**
+- [x] Repo demonstrates real `document.modelContext.registerTool(...)` usage (per required snippet) — `src/app/order/[id]/OrderClient.tsx`, all 7 tools
+- [ ] Text description covers: WebMCP fit, UX improvement, what's newly possible, implementation summary — drafted in `PROJECT.md`, needs a final pass once the live demo is verified in a real WebMCP browser
 - [ ] <3 min demo video, public on YouTube, with audio, no third-party trademarked/copyrighted material
+- [x] Automated tests for the 7 core behaviors (`npm test`) — session lifecycle, add/remove scoping, menu allow-list, quantity cap, identity spoofing rejection, split math, host-only finalize + post-finalize lock
 - [x] Confirm project name is specific (not AI-generic) before final submit — **Kitty**
 
 ## 9. Risks
