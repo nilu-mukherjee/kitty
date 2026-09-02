@@ -106,6 +106,75 @@ input {
   min-width: 200px;
 }
 
+.mascot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.mascot svg {
+  animation: mascot-bob 2.4s ease-in-out infinite;
+}
+
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.mascot-eye {
+  animation: mascot-blink 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes mascot-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+.mascot-bubble {
+  margin-top: 4px;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.try-asking {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(100, 160, 255, 0.1);
+  border: 1px solid rgba(100, 160, 255, 0.35);
+  margin-bottom: 16px;
+}
+
+.try-asking h2 {
+  margin-top: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.try-asking ul {
+  list-style: none;
+  font-size: 15px;
+}
+
+.try-asking li {
+  padding: 2px 0;
+  font-style: italic;
+}
+
 .notice {
   padding: 10px 12px;
   border-radius: 6px;

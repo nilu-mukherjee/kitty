@@ -206,6 +206,23 @@ export default function OrderClient({
   if (!identity) {
     return (
       <main className="wrap">
+        <div className="mascot" aria-hidden="true">
+          <svg viewBox="0 0 120 120" width="88" height="88">
+            <polygon points="24,40 40,10 52,42" fill="#f2a65a" />
+            <polygon points="96,40 80,10 68,42" fill="#f2a65a" />
+            <polygon points="30,36 40,18 48,38" fill="#c97a34" />
+            <polygon points="90,36 80,18 72,38" fill="#c97a34" />
+            <ellipse cx="60" cy="70" rx="42" ry="38" fill="#f2a65a" />
+            <circle className="mascot-eye" cx="44" cy="66" r="6" fill="#171717" />
+            <circle className="mascot-eye" cx="76" cy="66" r="6" fill="#171717" />
+            <path d="M52 84 Q60 92 68 84" stroke="#171717" strokeWidth="3" fill="none" strokeLinecap="round" />
+            <line x1="20" y1="76" x2="40" y2="80" stroke="#c97a34" strokeWidth="2" />
+            <line x1="20" y1="86" x2="40" y2="86" stroke="#c97a34" strokeWidth="2" />
+            <line x1="100" y1="76" x2="80" y2="80" stroke="#c97a34" strokeWidth="2" />
+            <line x1="100" y1="86" x2="80" y2="86" stroke="#c97a34" strokeWidth="2" />
+          </svg>
+          <p className="mascot-bubble">Hi, I&apos;m Kitty! What should I call you?</p>
+        </div>
         <h1 id="join-heading">Join this Kitty</h1>
         <p id="join-hint">Pick a name — your agent will use it to add your own items to the order.</p>
         <label htmlFor="participant-name" className="sr-only">
@@ -231,6 +248,19 @@ export default function OrderClient({
         You&apos;re in as <strong>{identity.name}</strong>
         {hostToken ? " (host)" : ""}.
       </p>
+
+      {session && !session.finalized && (
+        <section className="try-asking">
+          <h2>Try asking your agent</h2>
+          <ul>
+            <li>&ldquo;Add a {session.menu[0]?.name.toLowerCase()} to my order&rdquo;</li>
+            <li>&ldquo;I have a nut allergy&rdquo;</li>
+            <li>&ldquo;What&apos;s the total, and what do I owe?&rdquo;</li>
+            {hostToken && <li>&ldquo;Finalize the order&rdquo;</li>}
+          </ul>
+        </section>
+      )}
+
       {message && <p className="notice">{message}</p>}
       {session?.finalized && <p className="notice">This order is finalized. No more changes.</p>}
 
