@@ -205,12 +205,17 @@ export default function OrderClient({
   if (!identity) {
     return (
       <main className="wrap">
-        <h1>Join this Kitty</h1>
-        <p>Pick a name — your agent will use it to add your own items to the order.</p>
+        <h1 id="join-heading">Join this Kitty</h1>
+        <p id="join-hint">Pick a name — your agent will use it to add your own items to the order.</p>
+        <label htmlFor="participant-name" className="sr-only">
+          Your name
+        </label>
         <input
+          id="participant-name"
           value={nameInput}
           onChange={(e) => setNameInput(e.target.value)}
           placeholder="Your name"
+          aria-describedby="join-hint"
           onKeyDown={(e) => e.key === "Enter" && joinSession(nameInput)}
         />
         <button onClick={() => joinSession(nameInput)}>Join</button>
