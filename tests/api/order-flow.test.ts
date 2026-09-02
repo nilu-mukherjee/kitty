@@ -156,4 +156,19 @@ describe("session lifecycle", () => {
     expect(addAfterFinalize.status).toBe(409);
     expect(body.error).toMatch(/finalized/i);
   });
+
+  it("returns 400 (not 500) for a malformed JSON body", async () => {
+    const created = await newSession();
+
+    const badReq = new Request(`http://test/api/session/${created.id}/items`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{not-valid-json",
+    });
+    const res = await postItem(badReq, withId(created.id));
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.error).toMatch(/invalid json/i);
+  });
 });
