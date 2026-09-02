@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { findConflicts } from "@/lib/kitty/conflicts";
 
 type MenuItem = { id: string; name: string; price: number; tags: string[] };
 type OrderLine = { lineId: string; itemId: string; qty: number; notes?: string };
@@ -238,33 +239,39 @@ export default function OrderClient({
         {session && session.participants.length === 0 && (
           <p>No items yet — ask your agent to add something from the menu.</p>
         )}
-        {session?.participants.map((p) => (
-          <div key={p.name} className="participant">
-            <h3>
-              {p.name}
-              {p.restrictions.length > 0 && (
-                <span className="badges">
-                  {p.restrictions.map((r) => (
-                    <span key={r} className="badge">
-                      {r}
-                    </span>
-                  ))}
-                </span>
+        {session?.participants.map((p) => {
+          const conflicts = findConflicts(p.restrictions, p.lines, session.menu);
+          return (
+            <div key={p.name} className="participant">
+              <h3>
+                {p.name}
+                {p.restrictions.length > 0 && (
+                  <span className="badges">
+                    {p.restrictions.map((r) => (
+                      <span key={r} className="badge">
+                        {r}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </h3>
+              <ul>
+                {p.lines.map((line) => {
+                  const item = session.menu.find((m) => m.id === line.itemId);
+                  return (
+                    <li key={line.lineId}>
+                      {line.qty}× {item?.name ?? line.itemId}
+                      {line.notes ? ` — ${line.notes}` : ""} (${((item?.price ?? 0) * line.qty).toFixed(2)})
+                    </li>
+                  );
+                })}
+              </ul>
+              {conflicts.length > 0 && (
+                <p className="conflict">⚠ {conflicts.join("; ")}</p>
               )}
-            </h3>
-            <ul>
-              {p.lines.map((line) => {
-                const item = session.menu.find((m) => m.id === line.itemId);
-                return (
-                  <li key={line.lineId}>
-                    {line.qty}× {item?.name ?? line.itemId}
-                    {line.notes ? ` — ${line.notes}` : ""} (${((item?.price ?? 0) * line.qty).toFixed(2)})
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </section>
 
       <section>
