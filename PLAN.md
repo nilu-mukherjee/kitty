@@ -4,7 +4,7 @@
 
 ## 1. Deadline reality check
 
-Submission Period closes **Sept 3, 2026 @ 1:00 PM PT** (per the Updates tab; the hackathon overview page shows a slightly different GMT+5:30 timestamp — treat PT as authoritative since Rules/Updates repeat it). Today is **Sept 2, 2026**. That leaves roughly **one working day**. Scope below is deliberately trimmed to fit that — no auth system, no payments, no websockets, no multi-tenant infra.
+Submission Period closes **Sept 3, 2026 @ 1:00 PM PT**. Correction to an earlier note in this file: the Devpost overview page's **Sept 4, 2026 @ 1:30 AM GMT+5:30** is not a separate/conflicting deadline — it's the *same instant*, just shown in the viewer's local timezone. So there's a bit more runway than "one working day" implied (roughly two days from when this build started), but the scope below stays deliberately trimmed anyway — no auth system, no payments, no websockets, no multi-tenant infra — since that scope was the right call regardless of the exact hour count.
 
 ## 2. The idea
 
@@ -69,21 +69,29 @@ Total: ~9.5h — leaves slack against a full working day.
 
 ## 7. Demo video plan (<3 minutes, script it before recording)
 
-1. (0:00–0:20) One-sentence problem statement: "Group orders are annoying to coordinate."
-2. (0:20–1:30) Show 2 browser profiles/tabs as two "people." Each asks their own agent (in ChatGPT's in-app browser or Chrome with the WebMCP flag) to add items and flag an allergy to the *same* shared order page. Cart updates live in both views.
-3. (1:30–2:10) Show `split_bill` output and `finalize_order` as host.
-4. (2:10–2:45) 15-second explanation of how WebMCP was used (name the tools, mention the security guardrails).
-5. Audio narration required throughout — no silent screen capture.
+**Setup before recording:** open the live URL (https://kitty-1003427733440.asia-south1.run.app), click **Start a Kitty**, and keep the resulting `?host=...` URL handy for one browser profile/tab (the host); open the plain `/order/<id>` URL (no `host` param) in a second profile/tab or ChatGPT's in-app browser (the guest). Both need WebMCP enabled — see the checklist item above.
+
+1. **(0:00–0:20) Problem statement.** "Group orders are annoying to coordinate — someone has to manually collect everyone's order, remember allergies, and do the bill math."
+2. **(0:20–1:30) Two people, two agents, one cart.** As the host, ask your agent something like:
+   > "Add 2 burritos to my order, no onions."
+
+   Then, in the guest tab/profile, ask that agent:
+   > "Check the menu, then add a taco plate for me, and flag that I have a nut allergy."
+
+   Show both browser windows side by side — the cart updates live in both as each agent's `add_item`/`set_dietary_restriction` calls land.
+3. **(1:30–2:10) Split and finalize.** Ask either agent: *"What's the total, and how much does each person owe?"* (shows `split_bill`). Then, as the host, ask: *"Finalize the order."* (shows `finalize_order`, and that a guest agent can no longer add items afterward — worth demonstrating by trying and showing the rejection).
+4. **(2:10–2:45) How WebMCP was used.** Name the 7 tools briefly and mention the guardrail that matters most for judges: each tool call is scoped server-side to the calling participant's identity, so one agent can never edit another's order, and the menu is a fixed allow-list so an agent can't invent a priced item.
+5. Audio narration required throughout — no silent screen capture. Upload publicly to YouTube and paste the link into `PROJECT.md` and the Devpost submission form.
 
 ## 8. Submission checklist
 
-- [x] Live URL works in ChatGPT's in-app browser or Chrome 149+ with `chrome://flags/#enable-webmcp-testing` — https://kitty-1003427733440.asia-south1.run.app deployed and smoke-tested (create/get/split/finalize all verified via curl in prod); **still needs a manual pass in an actual WebMCP-capable browser to confirm tool registration works live**
+- [x] Live URL works — https://kitty-1003427733440.asia-south1.run.app deployed; full flow (create/join/add/restriction/split/finalize) verified via curl against prod, and the UI verified end-to-end in a real Chrome browser (join screen, order board, menu, split, Finalize button all render and work correctly). **What's not yet verified: actual WebMCP tool registration in a browser that has the flag on.** This sandbox's Chrome automation can't navigate to `chrome://flags` (blocked as an internal page), so this step needs a manual pass by you: open the live URL in ChatGPT's in-app browser, or Chrome 149+ with `chrome://flags/#enable-webmcp-testing` enabled, and confirm an agent can see/call the 7 tools.
 - [x] Public repo (GitHub/GitLab/Bitbucket) with all source + setup instructions — https://github.com/nilu-mukherjee/kitty
-- [x] Open-source license file (MIT recommended), visible in the repo's "About" section — `LICENSE` committed; **confirm it shows in GitHub's About panel once the repo's visibility/settings are checked**
+- [x] Open-source license file (MIT recommended), visible in the repo's "About" section — confirmed via GitHub API: `license.spdx_id: "MIT"`, plus description/homepage/topics set on the repo
 - [x] Repo demonstrates real `document.modelContext.registerTool(...)` usage (per required snippet) — `src/app/order/[id]/OrderClient.tsx`, all 7 tools
-- [ ] Text description covers: WebMCP fit, UX improvement, what's newly possible, implementation summary — drafted in `PROJECT.md`, needs a final pass once the live demo is verified in a real WebMCP browser
-- [ ] <3 min demo video, public on YouTube, with audio, no third-party trademarked/copyrighted material
-- [x] Automated tests for the 7 core behaviors (`npm test`) — session lifecycle, add/remove scoping, menu allow-list, quantity cap, identity spoofing rejection, split math, host-only finalize + post-finalize lock
+- [ ] Text description covers: WebMCP fit, UX improvement, what's newly possible, implementation summary — drafted in `PROJECT.md`; good enough to submit as-is, optionally tighten after your manual WebMCP-browser check above
+- [ ] <3 min demo video, public on YouTube, with audio, no third-party trademarked/copyrighted material — **needs you**; see Section 7 for the shot list
+- [x] Automated tests for the 7 core behaviors + malformed-input handling (`npm test`, 8 tests) — session lifecycle, add/remove scoping, menu allow-list, quantity cap, identity spoofing rejection, split math, host-only finalize + post-finalize lock, malformed JSON → 400
 - [x] Confirm project name is specific (not AI-generic) before final submit — **Kitty**
 
 ## 9. Risks
