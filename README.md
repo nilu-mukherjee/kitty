@@ -21,7 +21,7 @@ Built for the [WebMCP Challenge](https://webmcp.devpost.com/). See [`PROJECT.md`
 | `browse_menu` | List menu items with price + dietary tags |
 | `add_item` | Add `{itemId, qty, notes}` to the calling participant's own order |
 | `remove_item` | Remove one of the calling participant's own line items |
-| `set_dietary_restriction` | Flag an allergy/restriction for the calling participant |
+| `set_dietary_restriction` | Flag an allergy/restriction for the calling participant — cross-checked against the ordered items' menu tags, surfaced as a warning on the order board |
 | `get_order_summary` | Return the full group order + running total |
 | `split_bill` | Compute each participant's share of the total |
 | `finalize_order` | Host-only — locks the order |
@@ -51,6 +51,7 @@ Open the order page, join with a name, then ask your agent to browse the menu, a
 - Clients sync via polling (`GET /api/session/:id` every ~2s) rather than websockets, to keep the implementation small.
 - Every mutating tool call is scoped server-side to the calling participant's identity (name + a per-participant token generated client-side on join), so one agent can never edit another participant's order. `finalize_order` requires a separate host token.
 - The menu is a fixed allow-list (`src/lib/kitty/menu.ts`) — an agent can never invent an arbitrary priced item.
+- `src/lib/kitty/conflicts.ts` cross-checks a participant's stated restrictions against the menu tags of what they've actually ordered (vegan/gluten/dairy substring matching), surfaced as a warning on the order board.
 
 ## Deploying
 
