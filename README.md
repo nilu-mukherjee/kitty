@@ -4,7 +4,7 @@ Everyone's AI agent adds their own items and allergies to one shared group order
 
 **Live:** https://kitty-1003427733440.asia-south1.run.app
 
-Built for the [WebMCP Challenge](https://webmcp.devpost.com/). See [`PROJECT.md`](./PROJECT.md) for the full submission write-up and [`PLAN.md`](./PLAN.md) for the build plan.
+Built for the [WebMCP Challenge](https://webmcp.devpost.com/). See [`PROJECT.md`](./PROJECT.md) for the full submission write-up, [`PLAN.md`](./PLAN.md) for the build plan, and [`TESTING.md`](./TESTING.md) for step-by-step testing instructions.
 
 ## How it works
 
@@ -35,14 +35,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Testing WebMCP tool calls
+## Testing
 
-WebMCP is experimental. Test the live app in one of:
-
-- **ChatGPT's in-app browser** — supports WebMCP out of the box.
-- **Google Chrome 149+** — enable `chrome://flags/#enable-webmcp-testing` and restart the browser.
-
-Open the order page, join with a name, then ask your agent to browse the menu, add an item, flag a restriction, or check the split.
+WebMCP is experimental — test the live app in **ChatGPT's in-app browser** (supports WebMCP out of the box) or **Google Chrome 149+** (enable `chrome://flags/#enable-webmcp-testing` and restart). See [`TESTING.md`](./TESTING.md) for the full walkthrough (host/guest setup, UI-only testing, agent-driven WebMCP testing, and a DevTools snippet for verifying tool registration directly). No credentials are required — Kitty has no login/auth.
 
 ## Architecture notes
 

@@ -45,3 +45,5 @@ Itemized (not just equal) bill splitting, real restaurant menu imports, and lett
 **Database:** In-memory session store, pinned to a single Cloud Run instance (`min-instances=1`, `max-instances=1`) — no persistent DB by default; a separately-named Firestore database is the fallback if session persistence becomes necessary, kept fully isolated from any other data in the project
 
 **API:** WebMCP (`document.modelContext.registerTool`), Next.js API routes (REST)
+
+**AI tools:** Claude Code and Codex — used throughout for implementation, testing, and docs
