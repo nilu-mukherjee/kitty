@@ -94,7 +94,19 @@ Total: ~9.5h — leaves slack against a full working day.
 - [x] Automated tests for the 7 core behaviors + malformed-input handling (`npm test`, 8 tests) — session lifecycle, add/remove scoping, menu allow-list, quantity cap, identity spoofing rejection, split math, host-only finalize + post-finalize lock, malformed JSON → 400
 - [x] Confirm project name is specific (not AI-generic) before final submit — **Kitty**
 
-## 9. Risks
+## 9. Recent implementation updates (Sept 4, 2026)
+
+- Responsive three-column desktop layout: Menu, participant orders, and a right-hand utility column. The utility column places **Restrictions first, then Split**; narrower screens fall back to a non-overflowing two-column/stacked layout.
+- Participant order cards no longer use `<wa-details>` for cart lines, keeping item details visible. The dietary-restriction editor remains collapsible with `<wa-details>`.
+- Added a warm yellow/orange **Leave Kitty** button for non-host participants. Leaving removes that participant, their items, and restrictions from the shared session; hosts do not see the control.
+- Joining now registers the participant server-side immediately after a name is chosen, so their order card and participant name are visible before they add food.
+- Added a **Copy invite URL** button. It removes the private `host` query parameter before copying so guests can safely share the link.
+- Improved NOTE copy to explain sharing in plain language and include the invite action.
+- Dietary conflict indicators have a pointer cursor and only appear for actual incompatibilities (for example, a vegan restriction on a non-vegan item; Salad Bowl is correctly treated as vegan-safe).
+- WebMCP `add_item` now restricts `itemId` to the known menu allow-list and returns the exact server-resolved item name, quantity, and participant to prevent mismatched confirmations.
+- Added activity announcements using the existing refresh cycle: participant joined/left, item added/removed, restriction added/removed, and order finalized. Each event appears as a toast and is spoken by the browser; initial state and the current browser's own join/leave events are silent.
+
+## 10. Risks
 
 - **WebMCP is flag-gated/experimental** — test in real Chrome 149+ or ChatGPT's in-app browser well before recording; don't assume it works from code alone.
 - **Multi-agent demo logistics** — recording two agents acting on one shared session needs two browser profiles or ChatGPT app + Chrome side by side; rehearse this once before the real take.

@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Libre_Franklin } from "next/font/google";
+import "@awesome.me/webawesome/dist/styles/webawesome.css";
+import "@awesome.me/webawesome/dist/styles/themes/default.css";
+import { WebAwesomeRegistry } from "@/lib/webawesome-elements";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const libreFranklin = Libre_Franklin({
+  variable: "--font-libre-franklin",
   subsets: ["latin"],
 });
 
@@ -19,8 +22,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={`wa-dark ${libreFranklin.variable} ${geistMono.variable}`}>
+      <body>
+        <WebAwesomeRegistry />
+        {children}
+      </body>
     </html>
   );
 }

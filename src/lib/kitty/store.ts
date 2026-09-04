@@ -51,6 +51,24 @@ function getOrCreateParticipant(session: OrderSession, name: string, token: stri
   return participant;
 }
 
+export function joinParticipant(sessionId: string, name: string, token: string): OrderSession {
+  const session = getSession(sessionId);
+  if (session.finalized) throw new KittyError("This order has been finalized", 409);
+  getOrCreateParticipant(session, name, token);
+  return session;
+}
+
+export function leaveParticipant(sessionId: string, name: string, token: string): OrderSession {
+  const session = getSession(sessionId);
+  if (session.finalized) throw new KittyError("This order has been finalized", 409);
+  const key = name.trim().toLowerCase();
+  const participant = session.participants[key];
+  if (!participant) throw new KittyError("Participant not found", 404);
+  if (participant.token !== token) throw new KittyError("This name belongs to someone else in this session", 403);
+  delete session.participants[key];
+  return session;
+}
+
 export function addItem(
   sessionId: string,
   name: string,
@@ -97,6 +115,19 @@ export function setRestriction(sessionId: string, name: string, token: string, r
   if (clean && !participant.restrictions.includes(clean)) {
     participant.restrictions.push(clean);
   }
+  return session;
+}
+
+export function removeRestriction(sessionId: string, name: string, token: string, restriction: string): OrderSession {
+  const session = getSession(sessionId);
+  if (session.finalized) throw new KittyError("This order has been finalized", 409);
+  const key = name.trim().toLowerCase();
+  const participant = session.participants[key];
+  if (!participant) throw new KittyError("Participant not found", 404);
+  if (participant.token !== token) throw new KittyError("This name belongs to someone else in this session", 403);
+  const index = participant.restrictions.indexOf(restriction);
+  if (index === -1) throw new KittyError("Restriction not found", 404);
+  participant.restrictions.splice(index, 1);
   return session;
 }
 

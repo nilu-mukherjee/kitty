@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { POST as createSession } from "@/app/api/session/route";
 import { GET as getSession } from "@/app/api/session/[id]/route";
 import { POST as postItem } from "@/app/api/session/[id]/items/route";
+import { DELETE as deleteRestriction, POST as postRestriction } from "@/app/api/session/[id]/restrictions/route";
 import { GET as getSplit } from "@/app/api/session/[id]/split/route";
 import { POST as postFinalize } from "@/app/api/session/[id]/finalize/route";
 
@@ -28,6 +29,15 @@ function fetchSession(id: string) {
 
 function addItem(sessionId: string, body: unknown) {
   return postItem(postJson(`/api/session/${sessionId}/items`, body), withId(sessionId));
+}
+
+function changeRestriction(sessionId: string, body: unknown, method: "POST" | "DELETE") {
+  const request = new Request(`http://test/api/session/${sessionId}/restrictions`, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return method === "POST" ? postRestriction(request, withId(sessionId)) : deleteRestriction(request, withId(sessionId));
 }
 
 function fetchSplit(sessionId: string) {
@@ -96,6 +106,18 @@ describe("session lifecycle", () => {
 
     expect(addRes.status).toBe(400);
     expect(body.error).toMatch(/quantity/i);
+  });
+
+  it("lets a participant remove their own dietary restriction", async () => {
+    const created = await newSession();
+    const identity = { name: "Alice", token: "alice-token", restriction: "nut allergy" };
+
+    await changeRestriction(created.id, identity, "POST");
+    const removeRes = await changeRestriction(created.id, identity, "DELETE");
+    const order = await removeRes.json();
+
+    expect(removeRes.status).toBe(200);
+    expect(order.participants[0].restrictions).toEqual([]);
   });
 
   it("refuses to mutate an existing participant's order with the wrong token", async () => {

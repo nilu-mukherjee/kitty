@@ -24,15 +24,28 @@ export default function Home() {
 
   return (
     <main className="wrap">
-      <h1>🐱 Kitty</h1>
-      <p>
-        Start a group order. Everyone&apos;s own AI agent can add their items and allergies
-        straight into the shared cart — Kitty splits the bill automatically.
-      </p>
-      <button onClick={startOrder} disabled={loading}>
-        {loading ? "Starting…" : "Start a Kitty"}
-      </button>
-      {error && <p className="notice">{error}</p>}
+      <wa-card suppressHydrationWarning appearance="outlined" orientation="vertical">
+        <h1><wa-icon suppressHydrationWarning name="paw"></wa-icon> Kitty</h1>
+        <p>
+          Start a group order. Everyone&apos;s own AI agent can add their items and allergies
+          straight into the shared cart — Kitty splits the bill automatically.
+        </p>
+        <p style={{ color: "var(--wa-color-text-quiet)", fontSize: "var(--wa-font-size-s)" }}>
+          Built for the WebMCP challenge using the WebAwesome design system.
+        </p>
+        <div className="home-actions">
+          <wa-button suppressHydrationWarning className="start-kitty-btn" variant="brand" appearance="filled" loading={loading} disabled={loading} onClick={startOrder}>
+            <wa-icon suppressHydrationWarning canvas="fixed" slot="start" name="cart-shopping"></wa-icon>
+            <span>{loading ? "Starting…" : "Start a Kitty"}</span>
+          </wa-button>
+        </div>
+        {error && (
+          <wa-callout suppressHydrationWarning variant="danger" style={{ marginTop: "var(--wa-space-s)" }}>
+            <wa-icon suppressHydrationWarning canvas="fixed" slot="icon" name="triangle-exclamation"></wa-icon>
+            <span>{error}</span>
+          </wa-callout>
+        )}
+      </wa-card>
     </main>
   );
 }

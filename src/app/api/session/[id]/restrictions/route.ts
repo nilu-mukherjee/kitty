@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { setRestriction, serializeSession } from "@/lib/kitty/store";
+import { removeRestriction, setRestriction, serializeSession } from "@/lib/kitty/store";
 import { handleKittyError, parseJsonBody } from "@/lib/kitty/http";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -11,6 +11,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       restriction: string;
     }>(req);
     const session = setRestriction(id, name, token, restriction);
+    return NextResponse.json(serializeSession(session));
+  } catch (err) {
+    return handleKittyError(err);
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  try {
+    const { name, token, restriction } = await parseJsonBody<{
+      name: string;
+      token: string;
+      restriction: string;
+    }>(req);
+    const session = removeRestriction(id, name, token, restriction);
     return NextResponse.json(serializeSession(session));
   } catch (err) {
     return handleKittyError(err);
